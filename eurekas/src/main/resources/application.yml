@@ -1,0 +1,19 @@
+server:
+  port: 8762 #端口号
+spring:
+  application:
+    name: eureka #服务名称
+
+eureka:
+  instance:
+    hostname: eureka1 #节点
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ #注册地址
+
+        ####################################################
+        # 搭建高可用需配置eureka.instance.hostname: 注册中心host文件名称
+        # 单机在修改本地C:\Windows\System32\drivers\etc\hosts 如：127.0.0.1     eureka1
+      #127.0.0.1     eureka2
+#集群则无需此操作
+####################################################
