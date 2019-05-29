@@ -1,0 +1,51 @@
+server:
+  port: 8000
+
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  application:
+    name: gateway #服务名称
+  cloud:    #路由配置
+    gateway:
+      discovery:  # 路由方式一：根据地址即服务名调用接口（服务名必须大写）
+        locator:
+          enabled: true   #开启之后我们就可以通过地址去访问服务:http://localhost:8000/SPRING-CLOUD-CLIENT/hello
+      routes:   #路由方式二：根据配置进行属性
+      - id: spring-cloud-client              #我们定义了一个叫spring-cloud-client的路由1（随便配）
+        uri: lb://spring-cloud-client       #urilb代表从注册中心获取服务,后面接的就是你需要转发到的服务名称，这个服务名称必须跟eureka中的对应，否则会找不到服务
+        predicates:
+          - Path=/client/**       #当路径以/client/ 为前缀的请求都归这个路由处理
+        filters:
+        - StripPrefix=1  #请求/client/foo，去除掉前面一个前缀之后，最后转发到目标服务的路径为/foo
+            #########################token验证#############################
+        - JwtCheck   #模糊匹配过滤器JwtCheckGatewayFilterFactory      #
+            #########################token验证#############################
+            #########################限流#############################
+        - name: RequestRateLimiter  #filter 名称必须是 RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 1  #允许用户每秒处理多少个请求
+            redis-rate-limiter.burstCapacity: 1    #令牌桶的容量，允许在一秒钟内完成的最大请求数
+            key-resolver: "#{@ipKeyResolver}"   #使用 SpEL 按名称引用 bean
+            #########################限流#############################
+        #- id: spring-cloud-client              #路由2 配置
+          #uri: lb://spring-cloud-client
+          #predicates:
+            #- Path=/client/**
+          #filters:
+           # - StripPrefix=1
+
+logging:  #日志打印debug级别
+  level:
+    org.springframework.cloud.gateway: debug
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}   #将本机ip：port的形式注册到注册中心
+    prefer-ip-address: true  #获取本机Ip
+  client:
+    healthcheck:
+      enabled: true   #健康状态检查配置
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
