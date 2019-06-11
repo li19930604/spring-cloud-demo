@@ -2,7 +2,23 @@
 server:
   port: 8200
 
+###################开启访问接口的权限(配合mq)####################
+#springboot2.0之后访问post接口服务端/actuator/bus-refresh如：http://localhost:8200/actuator/bus-refresh
+#body得选择json
+management:
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh
+###################开启访问接口的权限(配合mq)####################
 spring:
+  ##############rabbitmq依赖##################
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  ##############rabbitmq依赖##################
   application:
     name: config-server
   profiles:
@@ -12,10 +28,10 @@ spring:
       server:
         #################git#################
         git:
-          uri: https://github.com/peichuanjiang/spring-cloud-demo.git
+          uri: https://github.com/peichuanjiang/spring-cloud-demo.git #git地址,请求localhost:8200/config-server/gateway-dev.yml表示在config-server目录下
           username: 269816847@qq.com
           password: 1565674986pei
-        #####################################
+        #################git#################
         ##############读本地配置#############
         #native:
           #searchLocations: D:/ #文件地址在d盘,启动项目访问：http://localhost:8100/文件名,文件名yml格式:port: 8001

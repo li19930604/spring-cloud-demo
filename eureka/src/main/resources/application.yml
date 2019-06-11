@@ -17,8 +17,8 @@ eureka:
       enabled: true   #改变eureka server对客户端健康检查方式
     register-with-eureka: false   #是否将自己注册到注册中心
     fetch-registry: false   #是否可检索
-    service-url:
-      defaultZone: http://localhost:8762/eureka/
+    #service-url:
+      #defaultZone: http://localhost:8762/eureka/
         ####################################################
         # 搭建高可用需配置eureka.instance.hostname: 注册中心host文件名称
         # 单机在修改本地C:\Windows\System32\drivers\etc\hosts 如：127.0.0.1     server2

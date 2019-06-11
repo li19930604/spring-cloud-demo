@@ -1,0 +1,27 @@
+server:
+  port: 8201
+
+spring:
+  ##############rabbitmq依赖##################
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  ##############rabbitmq依赖##################
+  application:
+    name: config-client
+  cloud:
+    config:
+      #######################git#######################
+      name: gateway # 定义要读取的资源文件-->cloud-config-client-dev.yml
+      profile: dev # 对应 {profile} 部分
+      label: master # 对应 {label} 部分，即 Git 的分支。
+      uri: http://localhost:8200/ #配置服务器
+
+      #######################git#######################
+      ###################读取本地配置###################
+      #name: commonss,client1
+      #profile: dev
+      #uri: http://localhost:8200
+      ###################读取本地配置###################
