@@ -1,5 +1,14 @@
 server:
   port: 8000
+eureka:
+  instance:
+    prefer-ip-address: true  #获取本机Ip
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}   #将本机ip：port的形式注册到注册中心
+  client:
+    healthcheck:
+      enabled: true   #健康状态检查配置
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 spring:
   redis:
@@ -13,8 +22,8 @@ spring:
         locator:
           enabled: true   #开启之后我们就可以通过地址去访问服务:http://localhost:8000/SPRING-CLOUD-CLIENT/hello
       routes:   #路由方式二：根据配置进行属性
-      - id: spring-cloud-client              #我们定义了一个叫spring-cloud-client的路由1（随便配）
-        uri: lb://spring-cloud-client       #urilb代表从注册中心获取服务,后面接的就是你需要转发到的服务名称，这个服务名称必须跟eureka中的对应，否则会找不到服务
+      - id: spring-cloud-config-client              #我们定义了一个叫spring-cloud-client的路由1（随便配）
+        uri: lb://config-client       #urilb代表从注册中心获取服务,后面接的就是你需要转发到的服务名称，这个服务名称必须跟eureka中的对应，否则会找不到服务
         predicates:
           - Path=/client/**       #当路径以/client/ 为前缀的请求都归这个路由处理
         filters:
@@ -39,13 +48,3 @@ spring:
 logging:  #日志打印debug级别
   level:
     org.springframework.cloud.gateway: debug
-
-eureka:
-  instance:
-    instance-id: ${spring.cloud.client.ip-address}:${server.port}   #将本机ip：port的形式注册到注册中心
-    prefer-ip-address: true  #获取本机Ip
-  client:
-    healthcheck:
-      enabled: true   #健康状态检查配置
-    service-url:
-      defaultZone: http://localhost:8761/eureka/

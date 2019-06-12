@@ -17,13 +17,29 @@ public class JwtCheckGatewayFilterFactory extends AbstractGatewayFilterFactory<J
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-        //config.setToken(exchange.getRequest().getHeaders().getFirst("Authorization"));
-        //================自测取的是url后面的参数===================
-        String tk = exchange.getRequest().getURI().getQuery();
-        if(tk.indexOf("token") > -1){
-            config.setToken(tk.substring(tk.indexOf("token=") + 6));//
-        }
-        //==========================================================
+
+            //构建返回
+            ServerHttpResponse response = exchange.getResponse();
+            //设置headers
+            HttpHeaders httpHeaders = response.getHeaders();
+            httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
+            httpHeaders.add("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+            //设置body
+            String bodyStr = "未登录或登录超时";
+
+            try{
+                //config.setToken(exchange.getRequest().getHeaders().getFirst("Authorization"));
+                //================自测取的是url后面的参数===================
+                String tk = exchange.getRequest().getURI().getQuery();
+                if(tk.indexOf("token") > -1){
+                    config.setToken(tk.substring(tk.indexOf("token=") + 6));//
+                }
+                //==========================================================
+            }catch (Exception e){
+                bodyStr = "token异常，请按[Url + ?token=xxx]的形式请求";
+                DataBuffer bodyDataBuffer = response.bufferFactory().wrap(bodyStr.getBytes());
+                return response.writeWith(Mono.just(bodyDataBuffer));
+            }
 
         //校验jwtToken的合法性
         if (config.getToken() != null) {
@@ -31,15 +47,7 @@ public class JwtCheckGatewayFilterFactory extends AbstractGatewayFilterFactory<J
         return chain.filter(exchange); }
 
         //不合法(响应未登录的异常)
-        ServerHttpResponse response = exchange.getResponse();
-        //设置headers
-        HttpHeaders httpHeaders = response.getHeaders();
-        httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
-        httpHeaders.add("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-        //设置body
-        String warningStr = "未登录或登录超时";
-        DataBuffer bodyDataBuffer = response.bufferFactory().wrap(warningStr.getBytes());
-
+        DataBuffer bodyDataBuffer = response.bufferFactory().wrap(bodyStr.getBytes());
         return response.writeWith(Mono.just(bodyDataBuffer));
         };
         }

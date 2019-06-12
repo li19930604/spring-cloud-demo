@@ -8,6 +8,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  *  读取本地配置
  *
@@ -24,12 +26,17 @@ public class ConfigClientApplication {
 
     @Value("${name}")  // 从对应的配置中心找到文件并把属性注入到value值中
     private String name;
-    @Value("${name2}")  // 从对应的配置中心找到文件并把属性注入到value值中
-    private String name2;
+
+//    @Value("${sex}")  // 从对应的配置中心找到文件并把属性注入到value值中
+//    private String sex;
 
     @RequestMapping("/getData")
     public String getData(){
-        return "=========="+name+ " || "+name2 +"==========";
+        try {
+            return "=========="+new String(name.getBytes(),"UTF-8")+"==========";
+        } catch (UnsupportedEncodingException e) {
+            return e.getMessage();
+        }
     }
 }
 

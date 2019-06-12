@@ -1,9 +1,19 @@
 #本地配置
 server:
   port: 8200
+eureka:
+  instance:
+    prefer-ip-address: true  #获取本机Ip
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}   #将本机ip：port的形式注册到注册中心
+  client:
+    healthcheck:
+      enabled: true   #健康状态检查配置
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 ###################开启访问接口的权限(配合mq)####################
-#springboot2.0之后访问post接口服务端/actuator/bus-refresh如：http://localhost:8200/actuator/bus-refresh
+#自动刷新：在git上进入项目，点击settings进入后选择webhooks，点击Addwebhooks,填写Payload URL更新地址,选择Content type为application/json，点击确认即可,未实现
+#手动刷新：springboot2.0之后访问post接口服务端/actuator/bus-refresh如：http://localhost:8200/actuator/bus-refresh
 #body得选择json
 management:
   endpoints:
@@ -14,7 +24,7 @@ management:
 spring:
   ##############rabbitmq依赖##################
   rabbitmq:
-    host: 127.0.0.1
+    host: 192.168.7.90
     port: 5672
     username: guest
     password: guest
@@ -36,11 +46,3 @@ spring:
         #native:
           #searchLocations: D:/ #文件地址在d盘,启动项目访问：http://localhost:8100/文件名,文件名yml格式:port: 8001
         ######################################
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
-

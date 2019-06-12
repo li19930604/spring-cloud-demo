@@ -19,3 +19,7 @@ spring-cloud-gateway
 * 不加token路由会报错，暂未处理异常返回
 * 得下载redis安装并启动即可
 * 若出现找不到类请先检查jar是否全部下载完毕，unkown则表示jar无效，可在idea右边maven的Dependencies中查看，若出现unkown请先删除本地jar再更新pom，若尝试多次下载不下来请至maven公共库搜索对应jar并选择最多使用的版本替换pom里的相关Jar即可
+
+**2019.6.12** ~~修订信息~~
+* token无效返回处理
+* 优化部分配置
